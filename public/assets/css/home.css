@@ -1,0 +1,15 @@
+.site-blocks-cover.overlay::before {
+  background: rgba(0, 0, 0, 0.52);
+}
+
+.site-blocks-cover p {
+  color: #fff;
+}
+
+.owl-carousel .owl-stage {
+  display: flex;
+}
+
+.owl-carousel .owl-stage .owl-item > div, .owl-carousel .owl-stage .owl-item div a, .owl-carousel .owl-stage .owl-item div a img {
+  height: 100%;
+}

@@ -1,0 +1,22 @@
+.site-blocks-cover{
+  &.overlay{
+    &::before{
+      background: rgba($color: #000000, $alpha: 0.52);
+    }
+  }
+  p{
+    color: #fff;
+  }
+}
+
+.owl-carousel {
+  .owl-stage {
+    display: flex;
+
+    .owl-item {
+        > div, div a, div a img{
+        height: 100%;
+      }
+    }
+  }
+}
