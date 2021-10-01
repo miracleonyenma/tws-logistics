@@ -3,7 +3,7 @@
 
 <head>
     <%- include('./partials/head.ejs') %>
-    <link rel="stylesheet" href="/assets/css/home.css" />
+    <link rel="stylesheet" href="/assets/css/auth.css" />
 </head>
 
 <body>
@@ -27,11 +27,12 @@
     <div class="container">
         <div class="row align-items-center no-gutters align-items-stretch overlap-section">
             <div class="col-md-12 mb-5">
-                <form action="#" id="form" class="p-5 bg-white">
+                <form action="#" id="form" class="form p-5">
                     <div class="row form-group">
                         <div class="col-md-6 mb-3 mb-md-0">
-                            <label class="text-black" for="first_name">First Name</label>
-                            <input type="text" id="first_name" class="form-control">
+                            <label class="text-black" for="first_name">First Name *</label>
+                            <input type="text" id="first_name" class="form-control" required>
+                            <div class="error-cont first_name"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="text-black" for="last_name">Last Name</label>
@@ -40,15 +41,16 @@
                     </div>
                     <div class="row form-group">
                         <div class="col-md-12">
-                            <label class="text-black" for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control">
-                            <div class="pass-err"></div>
+                            <label class="text-black" for="email">Email *</label>
+                            <input type="email" id="email" name="email" class="form-control" required>
+                            <div class="error-cont email"></div>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col-md-12">
-                            <label class="text-black" for="password">Password</label>
-                            <input type="password" id="password" name="password" class="form-control">
+                            <label class="text-black" for="password">Password *</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                            <div class="error-cont password"></div>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -56,19 +58,32 @@
                             <input type="submit" value="Create Account" class="btn btn-primary py-2 px-4 text-white">
                         </div>
                     </div>
+
+                    <div>
+                        <span>Have an account already? <a href="/login">Log In</a></span>
+                    </div>
+
                 </form>
             </div>
         </div>
+    </div>
+
+    <div class="bubble">
+        <span>Some text</span>
     </div>
 
     <%- include('./partials/footer.ejs') %>
 
     <%- include('./partials/scripts.ejs') %>
 
+
+
     <script>
         const form = document.querySelector("#form")
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            document.querySelectorAll(`.error-cont`).forEach(x => x.textContent = "")
+            const bubble_cont = document.querySelector('.bubble')
 
             // get values
             const first_name = form.first_name.value
@@ -78,6 +93,37 @@
 
             console.log(first_name, last_name, email, password);
 
+            try {
+                const res = await fetch('/signup', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        first_name, last_name, email, password
+                    }),
+                    headers: { 'Content-Type' : 'application/json' }
+                })
+
+                const data = await res.json()
+                console.log(data);
+
+                if(data.errors){
+                    Object.keys(data.errors).forEach(x => {
+                        document.querySelector(`.error-cont.${x}`).textContent = data.errors[`${x}`]
+                    })
+                }
+
+                if(data.user){
+                    bubble_cont.classList.add(...['active', 'success']);
+                    bubble_cont.querySelector('span').textContent = "Registeration Successful!"
+
+                    setTimeout(()=> {
+                        bubble_cont.classList.remove('active')
+                        location.assign('/')
+                    }, 2000)
+                }
+
+            } catch (err) {
+                console.log(err);
+            }
 
         })
     </script>

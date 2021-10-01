@@ -1,0 +1,35 @@
+.form {
+  background: #fff;
+  box-shadow: 0rem 1rem 1rem rgba(0, 0, 0, 0.12);
+}
+
+.error-cont {
+  color: #dd3030;
+}
+
+.bubble {
+  min-width: 180px;
+  height: 80px;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  z-index: 9;
+  transition: transform 0.34s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: #fff;
+  box-shadow: 0rem 1rem 1rem rgba(0, 0, 0, 0.12);
+}
+
+.bubble.active {
+  transform: translate(-50%, -100%);
+}
+
+.bubble.success {
+  background: #4CAF50;
+  color: #fff;
+  font-size: large;
+}
