@@ -1,0 +1,94 @@
+body {
+  background: #fff;
+}
+
+ul {
+  margin: 0;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+  background-clip: border-box;
+  padding: 0.65rem 1.5rem;
+  border: 0 solid rgba(0, 0, 0, 0.125);
+}
+
+.dashboard-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: #fff;
+  z-index: 9;
+  padding: 1rem 2rem;
+}
+
+.dashboard-header .wrapper {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.dashboard-header .site-logo {
+  display: inline-block;
+  margin: 0;
+}
+
+.dashboard-header .site-logo h4 {
+  margin: 0;
+}
+
+.dashboard-header .cont {
+  display: flex;
+  justify-content: right;
+  gap: 1rem;
+}
+
+.dashboard-main {
+  display: flex;
+}
+
+.sidebar {
+  background: #f8f9fa;
+}
+
+.sidebar,
+.sidebar ~ .site-section {
+  padding: 2rem;
+}
+
+.sidebar .card {
+  min-width: 210px;
+  cursor: pointer;
+}
+
+.sidebar .card.active, .sidebar .card:hover, .sidebar .card:focus {
+  background: #fff;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.051);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-section {
+  margin-bottom: 1rem;
+}
+
+.nav-section h4 {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.site-section {
+  width: 100%;
+}
