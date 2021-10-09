@@ -92,3 +92,20 @@ ul {
 .site-section {
   width: 100%;
 }
+
+.shipments {
+  margin-top: 2rem;
+}
+
+.shipments p {
+  margin-bottom: 0;
+}
+
+.shipments .cards .card {
+  background: #fff;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.shipments .cards .card:hover, .shipments .cards .card:focus {
+  background: #f8f9fa;
+}

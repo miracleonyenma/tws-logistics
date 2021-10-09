@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./routes/authRoutes');
+const shipmentRoutes = require('./routes/shipmentRoutes');
 const { requireAuth, checkUser } = require('./middleware/authMiddleware')
 
 dotenv.config({
@@ -36,6 +37,12 @@ app.get('/industries', (req, res) => {
 app.get('/services', (req, res) => {
   res.render('services');
 });
+app.get('/tracking', (req, res) => {
+  res.render('tracking');
+});
+
+
+
 
 app.get('/dashboard', requireAuth, (req, res) => {
   res.render('dashboard');
@@ -45,6 +52,7 @@ app.get('/dashboard', requireAuth, (req, res) => {
 //   res.status(404).render('404')
 // })
 app.use(authRoutes)
+app.use(shipmentRoutes)
 
 app.get('/set-cookie', (req, res) => {
   // res.setHeader('Set-Cookie', 'newUser=true');

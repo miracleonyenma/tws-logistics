@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head.ejs') %>
+    <link rel="stylesheet" href="/assets/css/tracking.css" />
+  </head>
+
+  <body>
+    <%- include('./partials/header.ejs') %>
+
+    <section class="site-section bg-light">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-12 mb-5">
+            <form id="form" class="form p-5 bg-white">
+              <header class="mb-5">
+                <h1>Track your shipment</h1>
+              </header>
+
+              <div class="row form-group">
+                <div class="col-md-12">
+                  <label class="text-black" for="tracking_code"
+                    >Enter Tracking Code</label
+                  >
+                  <input
+                    type="text"
+                    id="tracking_code"
+                    class="form-control"
+                    required
+                  />
+                  <div class="error-cont tracking_code"></div>
+                </div>
+              </div>
+
+              <div class="row form-group">
+                <div class="col-md-12">
+                  <input
+                    type="submit"
+                    value="Show shipment"
+                    class="btn btn-primary py-2 px-4 text-white"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="col-md-12">
+            <div id="map"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%- include('./partials/footer.ejs') %> <%-
+    include('./partials/scripts.ejs') %>
+
+    <script>
+      const initMap = () => {
+        // map options
+        let options = {
+          zoom: 10,
+          center: {
+            lat: 5.4891,
+            lng: 7.0176,
+          },
+        };
+        // new map
+        const map = new google.maps.Map(
+          document.querySelector("#map"),
+          options
+        );
+
+        // add marker
+        const addMarker = ({ coords }) => {
+          console.log(coords);
+          const marker = new google.maps.Marker({
+            position: coords,
+            map: map,
+          });
+        };
+
+        addMarker({
+          coords: options.center,
+        });
+      };
+
+      const getData = ({ data = [] }) => {
+        const values = {};
+        console.log(data);
+
+        data.forEach((value) => {
+          values[value.id] = value.value;
+        });
+
+        console.log(values);
+        return values;
+      };
+
+      const submitForm = ({ route, selector, data = [] }) => {
+        const form = document.querySelector(selector);
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          try {
+            const { tracking_code } = getData({ data });
+            console.log(tracking_code);
+
+            const res = await fetch(`${route}${tracking_code}`);
+            const shipments = await res.json();
+            console.log(shipments);
+          } catch (err) {
+            console.trace(err);
+          }
+        });
+      };
+
+      submitForm({ route: `/shipment/`, selector: "#form", data: [tracking_code], });
+    </script>
+
+    <script
+      async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfMfLEH13KhDQRLz2hXx_h0vbsoTnu2c4&libraries=places&callback=initMap"
+    ></script>
+  </body>
+</html>

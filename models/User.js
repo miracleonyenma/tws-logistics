@@ -4,8 +4,10 @@ const {
 } = require('validator')
 const bcrypt = require('bcrypt')
 
+// const { ShipmentSchema } = require('./Shipment')
 
-const userSchema = new mongoose.Schema({
+
+const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Please enter your email address'],
@@ -24,12 +26,17 @@ const userSchema = new mongoose.Schema({
     },
     last_name: {
         type: String
-    }
+    },
+    shipments: [
+        {
+            type: Object
+        }
+    ]
 
 })
 
 // fire a function after doc saved to db
-userSchema.post('save', (doc, next) => {
+UserSchema.post('save', (doc, next) => {
     console.log('new user saved to db', doc);
 
     next()
@@ -37,7 +44,7 @@ userSchema.post('save', (doc, next) => {
 
 
 // fire function before doc saved to schema
-userSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next) {
     const user = this;
 
     const salt = await bcrypt.genSalt()
@@ -47,7 +54,7 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-userSchema.statics.login = async function (email, password) {
+UserSchema.statics.login = async function (email, password) {
     const user = await this.findOne({ email })
 
     if (user) {
@@ -60,6 +67,6 @@ userSchema.statics.login = async function (email, password) {
     throw Error('Incorrect email')
 }
 
-const user = mongoose.model('user', userSchema)
+const User = mongoose.model('User', UserSchema)
 
-module.exports = user;
+module.exports = { UserSchema, User};

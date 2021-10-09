@@ -5,8 +5,8 @@ body {
   background: $bg;
 }
 
-ul{
-    margin: 0;
+ul {
+  margin: 0;
 }
 
 .cards {
@@ -26,34 +26,34 @@ ul{
   border: 0 solid rgba(0, 0, 0, 0.125);
 }
 
-.dashboard-header{
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background: $bg;
-    z-index: 9;
-    padding: 1rem 2rem;
+.dashboard-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: $bg;
+  z-index: 9;
+  padding: 1rem 2rem;
 
-    .wrapper{
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
+  .wrapper {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .site-logo {
+    display: inline-block;
+    margin: 0;
+
+    h4 {
+      margin: 0;
     }
+  }
 
-    .site-logo{
-        display: inline-block;
-        margin: 0;
-
-        h4{
-            margin: 0;
-        }
-    }
-
-    .cont{
-        display: flex;
-        justify-content: right;
-        gap: 1rem;
-    }
+  .cont {
+    display: flex;
+    justify-content: right;
+    gap: 1rem;
+  }
 }
 
 .dashboard-main {
@@ -97,4 +97,25 @@ ul{
 
 .site-section {
   width: 100%;
+}
+
+.shipments {
+  margin-top: 2rem;
+  // padding: 1rem;
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .cards {
+    .card {
+      background: $bg;
+      &:hover,
+      &:focus {
+        background: $bg-alt;
+      }
+
+      border-bottom: 2px solid darken($bg-alt, $amount: 0);
+    }
+  }
 }

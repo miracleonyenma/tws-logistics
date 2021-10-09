@@ -1,9 +1,21 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-li{
-    list-style: none;
+li {
+  list-style: none;
+}
+
+.site-navbar {
+  top: 0;
+  position: fixed;
+  background: #343a40;
+}
+
+/* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+#map {
+  height: 100%;
 }
