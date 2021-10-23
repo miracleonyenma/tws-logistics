@@ -4,16 +4,16 @@ const { User } = require('./User')
 
 const ShipmentSchema = new mongoose.Schema({
   customer_id: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: [true, 'Shipment must have a user'],
-    lowercase: true
   },
 
   pickup_loc: {
     type: Object,
     required: [true, 'Please enter the location of the shipment'],
   },
-  destination: {
+  destination_loc: {
     type: Object,
     required: [true, 'Please enter destination of your shipment']
   },
@@ -43,6 +43,20 @@ ShipmentSchema.pre('save', async function (next) {
   console.log("Saved Collections:", savedUser, savedShipment)
   next()
 })
+
+// ShipmentSchema.post('save', async function (next) {
+//   console.error()
+//   next()
+// })
+
+// fire fucntion before doc deleted
+ShipmentSchema.post('deleteOne', async function(doc, next) {
+  console.log('post delete', doc)
+
+
+  next()
+})
+
 
 // userSchema.statics.login = async function (email, password) {
 //     const user = await this.findOne({ email })

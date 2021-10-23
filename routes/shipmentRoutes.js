@@ -6,5 +6,6 @@ const router = Router()
 router.get('/shipments', shipmentController.shipments_get)
 router.post('/shipment', shipmentController.shipment_add)
 router.get('/shipment/:id', shipmentController.shipment_get)
+router.delete('/shipment/:id', shipmentController.shipment_delete)
 
 module.exports = router

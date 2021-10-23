@@ -26,12 +26,13 @@ const checkUser = async (req, res, next) => {
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
             if (err) {
-                console.log(err.message);
+                // console.log(err.message);
                 res.locals.user = null
                 next()
             } else {
-                console.log(decodedToken);
-                const user = await User.findById(decodedToken.id)
+                // console.log('decodedToken', decodedToken);
+                const user = await User.findById(decodedToken.id).populate('shipments')
+                // console.log(user);
                 res.locals.user = user
                 next()
             }

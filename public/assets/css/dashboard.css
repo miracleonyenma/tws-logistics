@@ -6,6 +6,25 @@ ul {
   margin: 0;
 }
 
+button {
+  cursor: pointer;
+}
+
+.cta {
+  border: none;
+  padding: .5rem 1rem;
+}
+
+.delete {
+  color: #d74442;
+  background: none;
+  padding: 0;
+}
+
+.delete:hover {
+  color: #c62c2a;
+}
+
 .cards {
   display: flex;
   flex-direction: column;
@@ -18,8 +37,13 @@ ul {
   flex-direction: column;
   word-wrap: break-word;
   background-clip: border-box;
-  padding: 0.65rem 1.5rem;
+  padding: 1.5rem;
   border: 0 solid rgba(0, 0, 0, 0.125);
+}
+
+.card .options {
+  display: flex;
+  margin-top: 1.5rem;
 }
 
 .dashboard-header {

@@ -1,87 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <%- include('./partials/head.ejs') %>
+    <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    <link rel="stylesheet" href="/assets/css/auth.css" />
+  </head>
 
-<head>
-  <%- include('./partials/head.ejs') %>
-  <link rel="stylesheet" href="/assets/css/dashboard.css">
-</head>
+  <body>
+    <!-- <%- include('./partials/header.ejs') %> -->
 
-<body>
+    <%- include('./partials/dashboard-header.ejs') %>
 
-  <!-- <%- include('./partials/header.ejs') %> -->
+    <main class="dashboard-main">
+      <%- include('./partials/sidebar.ejs') %>
 
-  <%- include('./partials/dashboard-header.ejs') %>
-
-  <main class="dashboard-main">
-
-    <%- include('./partials/sidebar.ejs') %>
-
-    <div class="site-section bg-light">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-7 mb-5">
-            <header>
-              <h1>Hey, <%= user.first_name %> </h1>
-            </header>
-
-            <div class="shipments">
-              <h4 class="mb-3">Your shipments</h4>
-
-              <ul class="cards">
-                <% user.shipments.forEach(shipment => { %>
-                <li class="card">
-                  <header>
-                    <h2> <%= shipment.description %> </h2>
-                    <pre> <%= shipment._id %> </pre>
-                  </header>
-                </li>
-                <% }); %>
-              </ul>
-            </div>
-
-
-          </div>
-          <div class="col-md-5">
-            <form action="#" class="p-4 bg-white">
-              <header class="mb-3">
-                <h4>Add new shipment</h4>
+      <div class="site-section bg-light">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-7 mb-5">
+              <header>
+                <h1>Hey, <%= user.first_name %></h1>
               </header>
 
-              <div class="row form-group">
-                <input type="text" id="customer_id" class="form-control" value="<%= user._id %> " hidden>
-                <div class="col-md-12">
-                  <label class="text-black" for="pickup_loc">Pickup Location</label>
-                  <input type="text" id="pickup_loc" class="form-control">
-                </div>
+              <div class="shipments">
+                <h4 class="mb-3">Your shipments</h4>
+
+                <ul class="cards">
+                  <% user.shipments.forEach(shipment => { %>
+                  <li class="card">
+                    <header>
+                      <h2><%= shipment.description %></h2>
+                      <p><%= shipment.pickup_loc.formatted_address %> </p>
+                      <pre class="mt-3">Tracking code:  <%= shipment._id %> </pre>
+                    </header>
+
+                    <div class="options">
+                      <button value="<%= shipment._id %>" class="cta delete">
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                  <% }); %>
+                </ul>
               </div>
-              <div class="row form-group">
-                <div class="col-md-12">
-                  <label class="text-black" for="destination">Destination</label>
-                  <input type="email" id="destination" class="form-control">
+            </div>
+            <div class="col-md-5">
+              <form id="form" class="p-4 bg-white">
+                <header class="mb-3">
+                  <h4>Add new shipment</h4>
+                </header>
+
+                <div class="row form-group">
+                  <input
+                    type="text"
+                    id="customer_id"
+                    class="form-control"
+                    value="<%= user._id %>"
+                    hidden
+                  />
+                  <div class="col-md-12">
+                    <label class="text-black" for="pickup_loc"
+                      >Pickup Location</label
+                    >
+                    <input
+                      type="text"
+                      id="pickup_loc"
+                      class="form-control"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-md-12">
-                  <label class="text-black" for="description">Description</label>
-                  <input type="text" id="description" class="form-control">
+                <div class="row form-group">
+                  <div class="col-md-12">
+                    <label class="text-black" for="destination_loc"
+                      >Destination</label
+                    >
+                    <input
+                      type="text"
+                      id="destination_loc"
+                      class="form-control"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-              <div class="row form-group">
-                <div class="col-md-12">
-                  <input type="submit" value="Add shipment" class="btn btn-primary py-2 px-4 text-white">
+                <div class="row form-group">
+                  <div class="col-md-12">
+                    <label class="text-black" for="description"
+                      >Description</label
+                    >
+                    <input
+                      type="text"
+                      id="description"
+                      class="form-control"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-            </form>
+                <div class="row form-group">
+                  <div class="col-md-12">
+                    <input
+                      type="submit"
+                      value="Add shipment"
+                      class="btn btn-primary py-2 px-4 text-white"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
+    </main>
+
+    <div id="bubble" class="bubble">
+      <span>Some Message</span>
     </div>
 
-  </main>
+    <%- include('./partials/footer.ejs') %> <%-
+    include('./partials/scripts.ejs') %>
 
-  <%- include('./partials/footer.ejs') %>
+    <script type="module">
+      import funcs from "/assets/js/main.js";
+      const { getData, bubbleFunc } = funcs;
+      // let pickup_address;
+      // let destination_address;
 
-  <%- include('./partials/scripts.ejs') %>
-</body>
+      const deleteShipment = async (id) => {
+        console.log("111", id);
+        try {
+          const res = await fetch(`/shipment/${id}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          bubbleFunc({ message: "Shipment deleted succesfully" });
+        } catch (err) {}
+      };
 
+      const deleteBtns = document.querySelectorAll(".cta.delete");
+      deleteBtns.forEach((btn) =>
+        btn.addEventListener("click", (e) => deleteShipment(e.target.value))
+      );
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        console.log(customer_id);
+        const formData = getData([
+          customer_id,
+          pickup_loc,
+          destination_loc,
+          description,
+        ]);
+
+        formData.pickup_loc = window.pickup_address;
+        formData.destination_loc = window.destination_address;
+
+        console.log(formData);
+        try {
+          const res = await fetch("/shipment", {
+            method: "POST",
+            body: JSON.stringify(formData),
+            headers: { "Content-Type": "application/json" },
+          });
+
+          const data = await res.json();
+          bubble.querySelector("span").textContent =
+            "Shipment added successfully";
+          bubble.classList.add(...["active", "success"]);
+
+          setTimeout(() => {
+            bubble.classList.remove("active");
+            window.location.reload();
+          }, 2000);
+
+          console.log(data);
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    </script>
+
+    <script>
+      function initMap() {
+        const center = { lat: 9.082, lng: 8.6753 };
+
+        // Create a bounding box with sides ~10km away from the center point
+        const defaultBounds = {
+          north: center.lat + 10,
+          south: center.lat - 10,
+          east: center.lng + 10,
+          west: center.lng - 10,
+        };
+
+        const options = {
+          bounds: defaultBounds,
+          componentRestrictions: { country: "ng" },
+          fields: ["formatted_address", "address_components", "geometry", "icon", "name"],
+          strictBounds: false,
+          types: ["address"],
+        };
+
+        const pickup = new google.maps.places.Autocomplete(pickup_loc, options);
+
+        const destination = new google.maps.places.Autocomplete(
+          destination_loc,
+          options
+        );
+
+        pickup.addListener("place_changed", (e) => {
+          window.pickup_address = pickup.getPlace();
+        });
+
+        destination.addListener("place_changed", (e) => {
+          window.destination_address = destination.getPlace();
+        });
+      }
+    </script>
+
+    <script
+      async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfMfLEH13KhDQRLz2hXx_h0vbsoTnu2c4&libraries=places&callback=initMap"
+    ></script>
+  </body>
 </html>

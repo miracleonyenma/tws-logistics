@@ -29,7 +29,8 @@ const UserSchema = new mongoose.Schema({
     },
     shipments: [
         {
-            type: Object
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Shipment'
         }
     ]
 

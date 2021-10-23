@@ -1,3 +1,24 @@
+const getData = (data = []) => {
+  const values = {};
+  console.log(data);
+
+  data.forEach((value) => {
+    values[value.id] = value.value;
+  });
+
+  console.log(values);
+  return values;
+};
+
+const bubbleFunc = ({ bubble = document.querySelector(".bubble"), message = "Success!", status = "success", time = 2000 }) => {
+  bubble.querySelector("span").textContent = message;
+  bubble.classList.add(...["active", status]);
+  setTimeout(() => {
+    bubble.classList.remove("active");
+    window.location.reload();
+  }, time);
+}
+
 const loginFunc = async ({ email, password }) => {
   try {
     const res = await fetch("/login", {
@@ -28,3 +49,6 @@ const loginFunc = async ({ email, password }) => {
   }
 };
 
+export default { getData, loginFunc, bubbleFunc }
+
+// export default loginFunc

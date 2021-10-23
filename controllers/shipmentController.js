@@ -1,7 +1,17 @@
 const { Shipment } = require('../models/Shipment')
+const { User } = require('../models/User')
 
-module.exports.shipments_get = (req, res) => {
-  console.log(req)
+module.exports.shipments_get = async (req, res) => {
+  try {
+    const shipments = await Shipment.find({})
+    res.status(200).json({
+      shipments
+    })
+  } catch (err) {
+    res.status(400).json({
+      error: err
+    })
+  }
 }
 
 // const handleShipmentError = (error) => {
@@ -55,18 +65,18 @@ module.exports.shipment_get = async (req, res) => {
 
 module.exports.shipment_add = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(67, req.body);
     const {
       customer_id,
       pickup_loc,
-      destination,
+      destination_loc,
       description
     } = req.body
 
     const shipment = await Shipment.create({
       customer_id,
       pickup_loc,
-      destination,
+      destination_loc,
       description
     })
 
@@ -82,5 +92,26 @@ module.exports.shipment_add = async (req, res) => {
       }
     })
 
+  }
+}
+
+module.exports.shipment_delete = async (req, res) => {
+  try {
+    const { id } = req.params
+    const doc = await Shipment.findByIdAndDelete(id)
+    const user = await User.findById(doc.customer_id)
+
+    // const doc = await Shipment.deleteOne({ _id: id }, () => {
+    //   User
+    // })
+
+
+    console.log('doc', doc)
+
+    res.status(200).json({
+      doc
+    })
+  } catch (err) {
+    res.status(400).json({ error: err })
   }
 }

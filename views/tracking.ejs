@@ -45,6 +45,10 @@
           </div>
 
           <div class="col-md-12">
+            <header id="shipment_details">
+              <h1 id="shipment_description"></h1>
+              <p id="shipment_location"></p>
+            </header>
             <div id="map"></div>
           </div>
         </div>
@@ -55,15 +59,40 @@
     include('./partials/scripts.ejs') %>
 
     <script>
-      const initMap = () => {
+      const getShipment = async (id) => {
+        const res = await fetch(`/shipment/${id}`);
+        const { shipment } = await res.json();
+        return shipment;
+      };
+
+      async function initMap() {
+
+
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        const { id } = params;
+        tracking_code.value = id
+
+        console.log(80, id);
+        console.log(getData({data: [tracking_code]}));
+
+        const shipment = await getShipment(id);
+        console.log(shipment);
+        shipment_description.textContent = shipment.description
+        shipment_location.textContent = shipment.pickup_loc.formatted_address
+
+        console.log(71, shipment.pickup_loc.geometry.location);
+
         // map options
+
         let options = {
-          zoom: 10,
-          center: {
-            lat: 5.4891,
-            lng: 7.0176,
-          },
+          zoom: 14,
+
+          center: shipment
+            ? shipment.pickup_loc.geometry.location
+            : { lat: 5.4891, lng: 7.0176 },
         };
+
         // new map
         const map = new google.maps.Map(
           document.querySelector("#map"),
@@ -80,9 +109,9 @@
         };
 
         addMarker({
-          coords: options.center,
+          coords: shipment.pickup_loc.geometry.location,
         });
-      };
+      }
 
       const getData = ({ data = [] }) => {
         const values = {};
@@ -96,25 +125,38 @@
         return values;
       };
 
-      const submitForm = ({ route, selector, data = [] }) => {
-        const form = document.querySelector(selector);
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
+      form.addEventListener("submit", (e) => {
+        e.preventDefault()
+        const data = getData({data: [tracking_code]})
+        console.log(data.tracking_code);
+        setTimeout(()=>{
+          window.location.assign(`/tracking?id=${data.tracking_code}`)
+        }, 3000)
+      })
 
-          try {
-            const { tracking_code } = getData({ data });
-            console.log(tracking_code);
+      // const submitForm = ({ route, selector, data = [] }) => {
+      //   const form = document.querySelector(selector);
+      //   form.addEventListener("submit", async (e) => {
+      //     e.preventDefault();
 
-            const res = await fetch(`${route}${tracking_code}`);
-            const shipments = await res.json();
-            console.log(shipments);
-          } catch (err) {
-            console.trace(err);
-          }
-        });
-      };
+      //     try {
+      //       const { tracking_code } = getData({ data });
+      //       console.log("tracking_code", tracking_code);
 
-      submitForm({ route: `/shipment/`, selector: "#form", data: [tracking_code], });
+      //       const shipments = await getShipment(tracking_code);
+      //       console.log("shipment", shipment);
+      //       options.center = shipment.pickup_loc.geometry.location;
+      //     } catch (err) {
+      //       console.trace(err);
+      //     }
+      //   });
+      // };
+
+      // submitForm({
+      //   route: `/shipment/`,
+      //   selector: "#form",
+      //   data: [tracking_code],
+      // });
     </script>
 
     <script

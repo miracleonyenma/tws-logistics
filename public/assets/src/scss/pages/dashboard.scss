@@ -1,5 +1,6 @@
 $bg: #fff;
 $bg-alt: #f8f9fa;
+$danger: #d74442;
 
 body {
   background: $bg;
@@ -7,6 +8,25 @@ body {
 
 ul {
   margin: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+.cta{
+  border: none;
+  padding: .5rem 1rem;
+}
+
+.delete{
+  color: $danger;
+  background: none;
+  padding: 0;
+
+  &:hover{
+    color: darken($danger, $amount: 8);
+  }
 }
 
 .cards {
@@ -22,8 +42,13 @@ ul {
   word-wrap: break-word;
   //   background-color: $bg;
   background-clip: border-box;
-  padding: 0.65rem 1.5rem;
+  padding: 1.5rem;
   border: 0 solid rgba(0, 0, 0, 0.125);
+
+  .options{
+    display: flex;
+    margin-top: 1.5rem;
+  }
 }
 
 .dashboard-header {
