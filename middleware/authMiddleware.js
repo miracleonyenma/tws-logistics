@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { User } = require('../models/User')
+const { Shipment } = require('../models/Shipment')
 
 const requireAuth = (req, res, next) => {
     const token = req.cookies.jwt
@@ -31,9 +32,16 @@ const checkUser = async (req, res, next) => {
                 next()
             } else {
                 // console.log('decodedToken', decodedToken);
+                const users = await User.find().populate('shipments')
+                const shipments = await Shipment.find().populate('customer')
                 const user = await User.findById(decodedToken.id).populate('shipments')
                 // console.log(user);
                 res.locals.user = user
+                res.locals.users = users.filter((value) => {
+                    return value.first_name !== "Admin"
+                })
+                console.log(res.locals.users);
+                res.locals.shipments = shipments
                 next()
             }
         })

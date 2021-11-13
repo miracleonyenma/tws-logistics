@@ -133,3 +133,9 @@ button {
 .shipments .cards .card:hover, .shipments .cards .card:focus {
   background: #f8f9fa;
 }
+
+.hidden {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+}

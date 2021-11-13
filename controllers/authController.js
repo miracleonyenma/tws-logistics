@@ -1,5 +1,6 @@
 const { User } = require('../models/User');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { Shipment } = require('../models/Shipment');
 
 const maxAge = 60 * 60 * 24 * 31;
 
@@ -114,4 +115,24 @@ module.exports.login_post = async (req, res) => {
 module.exports.logout_get = async (req, res) => {
     res.cookie('jwt', '', {maxAge: 1})
     res.redirect('/')
+}
+
+module.exports.user_delete = async (req, res) => {
+    this.login_get()
+
+    let {id} = req.params;
+    try {
+        const user = await User.findByIdAndDelete(id)
+        const shipments = await Shipment.deleteMany({customer: id})
+
+        res.status(201).json({
+            user,
+            shipments
+        })
+
+    } catch (err) {
+        res.status(400).json({
+            error: err
+        })
+    }
 }

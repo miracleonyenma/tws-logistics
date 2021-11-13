@@ -1,0 +1,9 @@
+{
+  "DATABASE": "mongodb+srv://miracleio:<PASSWORD>@cluster0.vvzcm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  "DB_LOCAL": "mongodb://localhost:27017/twslogistics",
+  "DB_PASS": "miracon12",
+  "DOPPLER_CONFIG": "prd",
+  "DOPPLER_ENVIRONMENT": "prd",
+  "DOPPLER_PROJECT": "heroku_app",
+  "JWT_SECRET": "1234567890jwtjwt"
+}

@@ -48,6 +48,10 @@ app.get('/dashboard', requireAuth, (req, res) => {
   res.render('dashboard');
 });
 
+app.get('/admin', requireAuth, (req, res) => {
+  res.render('admin');
+});
+
 // app.use((req, res) => {
 //   res.status(404).render('404')
 // })

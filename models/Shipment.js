@@ -3,7 +3,7 @@ const { User } = require('./User')
 
 
 const ShipmentSchema = new mongoose.Schema({
-  customer_id: {
+  customer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Shipment must have a user'],
@@ -12,6 +12,10 @@ const ShipmentSchema = new mongoose.Schema({
   pickup_loc: {
     type: Object,
     required: [true, 'Please enter the location of the shipment'],
+  },
+  current_loc: {
+    type: Object,
+    required: [true, 'The shipment should have a current location']
   },
   destination_loc: {
     type: Object,
@@ -35,8 +39,8 @@ const ShipmentSchema = new mongoose.Schema({
 // fire function before doc saved to schema
 ShipmentSchema.pre('save', async function (next) {
   console.log(this)
-  const { customer_id } = this
-  const user = await User.findById(customer_id)
+  const { customer } = this
+  const user = await User.findById(customer)
   const savedShipment = await user.shipments.push(this)
   const savedUser = await user.save()
 

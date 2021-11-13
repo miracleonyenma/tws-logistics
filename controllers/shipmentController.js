@@ -19,7 +19,7 @@ module.exports.shipments_get = async (req, res) => {
 
 //   const errors = {
 //       // first_name: '',
-//       customer_id: '',
+//       customer: '',
 //       pickup_loc: '',
 //       destination: '',
 //       description: ''
@@ -67,16 +67,53 @@ module.exports.shipment_add = async (req, res) => {
   try {
     console.log(67, req.body);
     const {
-      customer_id,
+      customer,
       pickup_loc,
       destination_loc,
       description
     } = req.body
 
     const shipment = await Shipment.create({
-      customer_id,
+      customer,
       pickup_loc,
       destination_loc,
+      current_loc: pickup_loc,
+      description
+    })
+
+    res.status(201).json({
+      shipment
+    })
+
+  } catch (err) {
+    console.log(err)
+    res.status(400).json({
+      errors: {
+        message: err
+      }
+    })
+
+  }
+}
+
+module.exports.shipment_update = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    console.log(67, req.body);
+    const {
+      customer,
+      pickup_loc,
+      destination_loc,
+      current_loc,
+      description
+    } = req.body
+
+    const shipment = await Shipment.findByIdAndUpdate(id, {
+      customer,
+      pickup_loc,
+      destination_loc,
+      current_loc,
       description
     })
 
@@ -99,7 +136,7 @@ module.exports.shipment_delete = async (req, res) => {
   try {
     const { id } = req.params
     const doc = await Shipment.findByIdAndDelete(id)
-    const user = await User.findById(doc.customer_id)
+    const user = await User.findById(doc.customer)
 
     // const doc = await Shipment.deleteOne({ _id: id }, () => {
     //   User
