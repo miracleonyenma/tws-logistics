@@ -3,6 +3,9 @@
   <head>
     <%- include('./partials/head.ejs') %>
     <link rel="stylesheet" href="/assets/css/tracking.css" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl-js"></script>
   </head>
 
   <body>
@@ -159,9 +162,13 @@
       // });
     </script>
 
-    <script
-      async
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVn6omdBfSc6t6AVR5ZMDKvWLJHm28nAs&libraries=places&callback=initMap"
-    ></script>
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiZW5vczIyIiwiYSI6ImNsMHc2bG1wNDA0aXIzZHBvaHg0ejkyN2UifQ.b8_8NA6rih9lFRfbx9Hg0Q';
+      var map = new mapboxgl.Map({
+      container: 'map'
+      style:
+        'mapbox://style/mapbox/streets-v11'
+    });
+    </script>
   </body>
 </html>
