@@ -38,7 +38,7 @@ const checkUser = async (req, res, next) => {
                 // console.log(user);
                 res.locals.user = user
                 res.locals.users = users.filter((value) => {
-                    return value.first_name !== "Admin"
+                    return value.role !== "admin"
                 })
                 console.log(res.locals.users);
                 res.locals.shipments = shipments

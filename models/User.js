@@ -27,6 +27,12 @@ const UserSchema = new mongoose.Schema({
     last_name: {
         type: String
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+        required: [true, 'Please enter your role'],
+    },
     shipments: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -70,4 +76,4 @@ UserSchema.statics.login = async function (email, password) {
 
 const User = mongoose.model('User', UserSchema)
 
-module.exports = { UserSchema, User};
+module.exports = { UserSchema, User };

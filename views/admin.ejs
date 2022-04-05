@@ -1,282 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('./partials/head.ejs') %>
+
+<head>
+  <%- include('./partials/head.ejs') %>
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
-  </head>
+</head>
 
-  <body>
-    <!-- <%- include('./partials/header.ejs') %> -->
+<body>
+  <!-- <%- include('./partials/header.ejs') %> -->
 
-    <%- include('./partials/dashboard-header.ejs') %>
+  <%- include('./partials/dashboard-header.ejs') %>
 
     <main class="dashboard-main">
-      <% if(user.email === "cybsaint@gmail.com") { %>
+      <% if(user.role==="admin" ) { %>
 
         <%- include('./partials/sidebar.ejs') %>
 
-        <div class="site-section bg-light">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-7 mb-5">
-                <header>
-                  <h1>Hey, <%= user.first_name %></h1>
-                </header>
+          <div class="site-section bg-light">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-7 mb-5">
+                  <header>
+                    <h1>Hey, <%= user.first_name %>
+                    </h1>
+                  </header>
 
-                <div class="shipments">
-                  <h4 class="mb-3">All shipments</h4>
+                  <div class="shipments">
+                    <h4 class="mb-3">All shipments</h4>
 
-                  <ul class="cards">
-                    <% shipments.forEach(shipment => { %>
-                    <li class="card">
-                      <header>
-                        <h4><%= shipment.description %></h4>
-                        <p><%= shipment.pickup_loc %> </p>
-                        <pre class="mt-3">Tracking code:  <%= shipment._id %> </pre>
-                        <pre class="">Customer:  <%= shipment.customer.first_name %> </pre>
-                      </header>
+                    <ul class="cards">
+                      <% shipments.forEach(shipment=> { %>
+                        <li class="card">
+                          <header>
+                            <h4>
+                              <%= shipment.description %>
+                            </h4>
+                            <p>
+                              <%= JSON.stringify(shipment.pickup_loc) %>
+                            </p>
+                            <pre class="mt-3">Tracking code:  <%= shipment._id %> </pre>
+                            <pre class="">Customer:  <%= shipment.customer.first_name %> </pre>
+                          </header>
 
-                      <div class="options">
-                        <button value="id_<%= shipment._id %>" class="cta edit" style="margin-right: 1rem;">
-                          Edit
-                        </button>
+                          <div class="options">
+                            <button value="id_<%= shipment._id %>"
+                              data-pickup="<%=JSON.stringify(shipment.pickup_loc) %>"
+                              data-destination="<%=JSON.stringify(shipment.destination_loc) %>"
+                              data-current="<%=JSON.stringify(shipment.current_loc) %>" class="cta edit"
+                              style="margin-right: 1rem;">
+                              Edit
+                            </button>
 
-                        <button value="<%= shipment._id %>" class="shipment cta delete">
-                          Delete
-                        </button>
-                      </div>
-
-                      <div id="id_<%= shipment._id %>" class="edits hidden">
-                        <form value="<%= shipment._id %> " class="mt-5">
-                          <div class="row form-group">
-                            <input type="text" id="customer" class="form-control" value="<%= user._id %>" hidden />
-                            <div class="col-md-12">
-                              <label class="text-black" for="pickup_loc" >Pickup Location</label >
-                              <input type="text" id="pickup_loc" class="form-control" value="<%= JSON.stringify(shipment.pickup_loc) %>" required />
-                            </div>
-                          </div>
-                          <div class="row form-group">
-                            <div class="col-md-12">
-                              <label class="text-black" for="destination_loc" >Destination</label >
-                              <input type="text" id="destination_loc" class="form-control" value="<%= JSON.stringify(shipment.destination_loc) %>" required />
-                            </div>
+                            <button value="<%= shipment._id %>" class="shipment cta delete">
+                              Delete
+                            </button>
                           </div>
 
-                          <div class="row form-group">
-                            <div class="col-md-12">
-                              <label class="text-black" for="destination_loc" >Current location</label >
-                              <input type="text" id="current_loc" class="form-control" value="<%= JSON.stringify(shipment.current_loc) %>" required />
-                            </div>
-                          </div>
+                          <div id="id_<%= shipment._id %>" class="edits hidden">
+                            <form value="<%= shipment._id %> " class="mt-5">
+                              <div class="row form-group">
+                                <input type="text" id="customer" class="form-control" value="<%= user._id %>" hidden />
+                                <div class="col-md-12">
+                                  <label class="text-black" for="pickup_loc">Pickup Location</label>
+                                  <input type="text" id="pickup_loc" class="form-control"
+                                    value="<%= JSON.stringify(shipment.pickup_loc) %>" required />
+                                </div>
+                              </div>
+                              <div class="row form-group">
+                                <div class="col-md-12">
+                                  <label class="text-black" for="destination_loc">Destination</label>
+                                  <input type="text" id="destination_loc" class="form-control"
+                                    value="<%= JSON.stringify(shipment.destination_loc) %>" required />
+                                </div>
+                              </div>
 
-                          <div class="row form-group">
-                            <div class="col-md-12">
-                              <input type="submit" value="Update shipment" class="btn btn-primary py-2 px-4 text-white" />
-                            </div>
-                          </div>
+                              <div class="row form-group">
+                                <div class="col-md-12">
+                                  <label class="text-black" for="destination_loc">Current location</label>
+                                  <input type="text" id="current_loc" class="form-control"
+                                    value="<%= JSON.stringify(shipment.current_loc) %>" required />
+                                </div>
+                              </div>
 
-                        </form>
-                      </div>
-                    </li>
-                    <% }); %>
-                  </ul>
+                              <!-- MAP -->
+                              <div class="row form-group">
+                                <div class="col-md-12">
+                                  <div id='map_id_<%= shipment._id %>' style='width: 500px; height: 300px;'></div>
+                                </div>
+                              </div>
+                              <!-- END MAP -->
+
+                              <div class="row form-group">
+                                <div class="col-md-12">
+                                  <input type="submit" value="Update shipment"
+                                    class="btn btn-primary py-2 px-4 text-white" />
+                                </div>
+                              </div>
+
+                            </form>
+                          </div>
+                        </li>
+                        <% }); %>
+                    </ul>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-5">
-                <div class="customers">
-                  <h4 class="mb-3">All customers</h4>
+                <div class="col-md-5">
+                  <div class="customers">
+                    <h4 class="mb-3">All customers</h4>
 
-                  <ul class="cards">
+                    <ul class="cards">
 
-                    <% users.forEach(customer => { %>
-                    <li class="card bg-white">
-                      <header>
-                        <h4><%= customer.first_name %></h4>
-                        <p><%= customer.shipments.length > 1 ? `${customer.shipments.length} Shipments` : `${customer.shipments.length} Shipment`  %> </p>
-                      </header>
+                      <% users.forEach(customer=> { %>
+                        <li class="card bg-white">
+                          <header>
+                            <h4>
+                              <%= customer.first_name %>
+                            </h4>
+                            <p>
+                              <%= customer.shipments.length> 1 ? `${customer.shipments.length} Shipments` :
+                                `${customer.shipments.length} Shipment` %>
+                            </p>
+                          </header>
 
-                      <div class="options" style="margin-top: 0;">
-                        <button value="<%= customer._id %>" class="customer cta delete">
-                          Delete
-                        </button>
-                      </div>
-                    </li>
-                    <% }); %>
-                  </ul>
+                          <div class="options" style="margin-top: 0;">
+                            <button value="<%= customer._id %>" class="customer cta delete">
+                              Delete
+                            </button>
+                          </div>
+                        </li>
+                        <% }); %>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <% } else { %>
+          <% } else { %>
 
-          <header class="container mt-3">
-            <h1>Oops... you need to sign in as admin</h1>
-            <p><a href="/">Go to website</a></p>
-          </header>
+            <header class="container mt-3">
+              <h1>Oops... you need to sign in as admin</h1>
+              <p><a href="/">Go to website</a></p>
+            </header>
 
-        <% } %>
+            <% } %>
     </main>
 
     <div id="bubble" class="bubble">
       <span>Some Message</span>
     </div>
 
-    <%- include('./partials/footer.ejs') %> <%-
-    include('./partials/scripts.ejs') %>
-
-    <script type="module">
-      import funcs from "/assets/js/main.js";
-      const { getData, bubbleFunc } = funcs;
-      // let pickup_address;
-      // let destination_address;
-
-      const deleteShipment = async (id) => {
-        console.log("111", id);
-        let proceed = confirm("This will permanently delete this shipment. Proceed?")
-        if(proceed){
-          try {
-            const res = await fetch(`/shipment/${id}`, {
-              method: "DELETE",
-            });
-            const data = await res.json();
-            bubbleFunc({ message: "Shipment deleted succesfully" });
-          } catch (err) {
-            console.log(err);
-          }
-        }
-      };
-
-      const deleteUser = async (id) => {
-        console.log("111", id);
-        let proceed = confirm("This will permanently delete this user and all associated shipments. Proceed?")
-        if(proceed){
-          try {
-            const res = await fetch(`/user/${id}`, {
-              method: "DELETE",
-            });
-            const data = await res.json();
-            bubbleFunc({ message: "User deleted succesfully" });
-          } catch (err) {
-            console.log(err);
-          }
-        } else null
-      };
-
-      const deleteBtns = document.querySelectorAll(".shipment.cta.delete");
-      deleteBtns.forEach((btn) =>
-        btn.addEventListener("click", (e) => deleteShipment(e.target.value))
-      );
-
-      const deleteUserBtns = document.querySelectorAll(".customer.cta.delete");
-      deleteUserBtns.forEach((btn) =>
-        btn.addEventListener("click", (e) => deleteUser(e.target.value))
-      );
+    <%- include('./partials/footer.ejs') %>
+      <%- include('./partials/scripts.ejs') %>
 
 
 
-      const editBtns = document.querySelectorAll('.cta.edit')
-      editBtns.forEach(btn => {
-        let id = btn.value
-        console.log(id);
+        <script type="module">
+          let activeMap = window.activeMap = false;
 
-        btn.addEventListener("click", (e) => {
-          document.querySelector(`#${id}`).classList.toggle("hidden")
-        })
-      })
+          import funcs from "/assets/js/main.js";
+          const { getData, bubbleFunc } = funcs;
+          // let pickup_address;
+          // let destination_address;
 
-      const editForms = document.querySelectorAll('.edits form').forEach((form) => {
-        let id = form.getAttribute('value');
-        console.log(form);
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          let pickup_loc = form.querySelector('#pickup_loc')
-          let destination_loc = form.querySelector('#destination_loc')
-          let current_loc = form.querySelector('#current_loc')
-          let customer = form.querySelector('#customer')
+          mapboxgl.accessToken = 'pk.eyJ1IjoibWlyYWNsZWlvIiwiYSI6ImNsMWxlZXBzZzA5dnUzaXM5aGdxcjF6emkifQ.9jyycP5jJTS_veZVNPCXiA';
+          let map;
+          const cb = (map) => {
+            map.addControl(new mapboxgl.NavigationControl());
+          };
 
-        const formData = getData([
-          customer,
-          pickup_loc,
-          destination_loc,
-          current_loc,
-        ]);
-
-        // formData.customer = JSON.parse(customer)
-        formData.pickup_loc = JSON.parse(formData.pickup_loc)
-        formData.destination_loc = JSON.parse(formData.destination_loc)
-        formData.current_loc = JSON.parse(formData.current_loc)
-
-        console.log(formData);
-
-          try {
-            const res = await fetch(`/shipment/${id}`, {
-              method: "PUT",
-              body: JSON.stringify(formData),
-              headers: { "Content-Type": "application/json" },
+          const initMapBox = ({ container, center }, cb) => {
+            map = new mapboxgl.Map({
+              container,
+              center,
+              zoom: 12,
+              style: 'mapbox://styles/mapbox/streets-v11'
             });
 
-            const data = await res.json();
-            bubble.querySelector("span").textContent =
-              "Shipment updated successfully";
-            bubble.classList.add(...["active", "success"]);
-
-            setTimeout(() => {
-              bubble.classList.remove("active");
-              window.location.reload();
-            }, 2000);
-
-            console.log(data);
-          } catch (err) {
-            console.log(err);
+            cb(map)
           }
-        });
-      })
 
-    </script>
 
-    <script>
-      function initMap() {
-        const center = { lat: 9.082, lng: 8.6753 };
+          const deleteShipment = async (id) => {
+            console.log("111", id);
+            let proceed = confirm("This will permanently delete this shipment. Proceed?")
+            if (proceed) {
+              try {
+                const res = await fetch(`/shipment/${id}`, {
+                  method: "DELETE",
+                });
+                const data = await res.json();
+                bubbleFunc({ message: "Shipment deleted succesfully" });
+              } catch (err) {
+                console.log(err);
+              }
+            }
+          };
 
-        // Create a bounding box with sides ~10km away from the center point
-        const defaultBounds = {
-          north: center.lat + 10,
-          south: center.lat - 10,
-          east: center.lng + 10,
-          west: center.lng - 10,
-        };
+          const deleteUser = async (id) => {
+            console.log("111", id);
+            let proceed = confirm("This will permanently delete this user and all associated shipments. Proceed?")
+            if (proceed) {
+              try {
+                const res = await fetch(`/user/${id}`, {
+                  method: "DELETE",
+                });
+                const data = await res.json();
+                bubbleFunc({ message: "User deleted succesfully" });
+              } catch (err) {
+                console.log(err);
+              }
+            } else null
+          };
 
-        const options = {
-          bounds: defaultBounds,
-          componentRestrictions: { country: "ng" },
-          fields: ["formatted_address", "address_components", "geometry", "icon", "name"],
-          strictBounds: false,
-          types: ["address"],
-        };
+          const deleteBtns = document.querySelectorAll(".shipment.cta.delete");
+          deleteBtns.forEach((btn) =>
+            btn.addEventListener("click", (e) => deleteShipment(e.target.value))
+          );
 
-        const pickup = new google.maps.places.Autocomplete(pickup_loc, options);
+          const deleteUserBtns = document.querySelectorAll(".customer.cta.delete");
+          deleteUserBtns.forEach((btn) =>
+            btn.addEventListener("click", (e) => deleteUser(e.target.value))
+          );
 
-        const destination = new google.maps.places.Autocomplete(
-          destination_loc,
-          options
-        );
 
-        pickup.addListener("place_changed", (e) => {
-          window.pickup_address = pickup.getPlace();
-        });
 
-        destination.addListener("place_changed", (e) => {
-          window.destination_address = destination.getPlace();
-        });
-      }
-    </script>
+          const editBtns = document.querySelectorAll('.cta.edit')
+          editBtns.forEach(btn => {
+            let id = btn.value
+            let current_loc = JSON.parse(btn.getAttribute('data-current'))
+            let pickup_loc = JSON.parse(btn.getAttribute('data-pickup'))
+            let destination_loc = JSON.parse(btn.getAttribute('data-destination'))
 
-    <script
-      async
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVn6omdBfSc6t6AVR5ZMDKvWLJHm28nAs&libraries=places&callback=initMap"
-    ></script>
-  </body>
+            console.log({ id, data: { current_loc, pickup_loc, destination_loc } })
+
+            btn.addEventListener("click", (e) => {
+              if (activeMap) {
+                map.remove();
+                activeMap = false;
+              } else {
+                initMapBox({ container: `map_${id}`, center: current_loc }, cb);
+                activeMap = true;
+              }
+              document.querySelector(`#${id}`).classList.toggle("hidden")
+            })
+          })
+
+          const editForms = document.querySelectorAll('.edits form').forEach((form) => {
+            let id = form.getAttribute('value');
+            console.log(form);
+            form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              let pickup_loc = form.querySelector('#pickup_loc')
+              let destination_loc = form.querySelector('#destination_loc')
+              let current_loc = form.querySelector('#current_loc')
+              let customer = form.querySelector('#customer')
+
+              const formData = getData([
+                customer,
+                pickup_loc,
+                destination_loc,
+                current_loc,
+              ]);
+
+              // formData.customer = JSON.parse(customer)
+              formData.pickup_loc = JSON.parse(formData.pickup_loc)
+              formData.destination_loc = JSON.parse(formData.destination_loc)
+              formData.current_loc = JSON.parse(formData.current_loc)
+
+              console.log(formData);
+
+              try {
+                const res = await fetch(`/shipment/${id}`, {
+                  method: "PUT",
+                  body: JSON.stringify(formData),
+                  headers: { "Content-Type": "application/json" },
+                });
+
+                const data = await res.json();
+                bubble.querySelector("span").textContent =
+                  "Shipment updated successfully";
+                bubble.classList.add(...["active", "success"]);
+
+                setTimeout(() => {
+                  bubble.classList.remove("active");
+                  window.location.reload();
+                }, 2000);
+
+                console.log(data);
+              } catch (err) {
+                console.log(err);
+              }
+            });
+          })
+
+        </script>
+
+        <script>
+          function initMap() {
+            const center = { lat: 9.082, lng: 8.6753 };
+
+            // Create a bounding box with sides ~10km away from the center point
+            const defaultBounds = {
+              north: center.lat + 10,
+              south: center.lat - 10,
+              east: center.lng + 10,
+              west: center.lng - 10,
+            };
+
+            const options = {
+              bounds: defaultBounds,
+              componentRestrictions: { country: "ng" },
+              fields: ["formatted_address", "address_components", "geometry", "icon", "name"],
+              strictBounds: false,
+              types: ["address"],
+            };
+
+            const pickup = new google.maps.places.Autocomplete(pickup_loc, options);
+
+            const destination = new google.maps.places.Autocomplete(
+              destination_loc,
+              options
+            );
+
+            pickup.addListener("place_changed", (e) => {
+              window.pickup_address = pickup.getPlace();
+            });
+
+            destination.addListener("place_changed", (e) => {
+              window.destination_address = destination.getPlace();
+            });
+          }
+        </script>
+
+        <script async
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVn6omdBfSc6t6AVR5ZMDKvWLJHm28nAs&libraries=places&callback=initMap"></script>
+
+
+</body>
+
 </html>
