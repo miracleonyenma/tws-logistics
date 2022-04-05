@@ -166,8 +166,11 @@
 
           mapboxgl.accessToken = 'pk.eyJ1IjoibWlyYWNsZWlvIiwiYSI6ImNsMWxlZXBzZzA5dnUzaXM5aGdxcjF6emkifQ.9jyycP5jJTS_veZVNPCXiA';
           let map;
-          const cb = (map) => {
+          const cb = ({ map, center }) => {
             map.addControl(new mapboxgl.NavigationControl());
+            const marker1 = new mapboxgl.Marker()
+              .setLngLat(center)
+              .addTo(map);
           };
 
           const initMapBox = ({ container, center }, cb) => {
@@ -178,7 +181,7 @@
               style: 'mapbox://styles/mapbox/streets-v11'
             });
 
-            cb(map)
+            cb({ map, center })
           }
 
 
