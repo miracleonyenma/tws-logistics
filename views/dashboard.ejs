@@ -1,199 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('./partials/head.ejs') %>
+
+<head>
+  <%- include('./partials/head.ejs') %>
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
-  </head>
+</head>
 
-  <body>
-    <!-- <%- include('./partials/header.ejs') %> -->
+<body>
+  <!-- <%- include('./partials/header.ejs') %> -->
 
-    <%- include('./partials/dashboard-header.ejs') %>
+  <%- include('./partials/dashboard-header.ejs') %>
+
+    <script
+      src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+      type="text/css">
 
     <main class="dashboard-main">
       <%- include('./partials/sidebar.ejs') %>
 
-      <div class="site-section bg-light">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-7 mb-5">
-              <header>
-                <h1>Hey, <%= user.first_name %></h1>
-              </header>
-
-              <div class="shipments">
-                <h4 class="mb-3">Your shipments</h4>
-
-                <ul class="cards">
-                  <% user.shipments.forEach(shipment => { %>
-                  <li class="card">
-                    <header>
-                      <h2><%= shipment.description %></h2>
-                      <p><%= shipment.pickup_loc.formatted_address %> </p>
-                      <pre class="mt-3">Tracking code:  <%= shipment._id %> </pre>
-                    </header>
-
-                    <div class="options">
-                      <button value="<%= shipment._id %>" class="cta delete">
-                        Delete
-                      </button>
-                    </div>
-                  </li>
-                  <% }); %>
-                </ul>
-              </div>
-            </div>
-            <div class="col-md-5">
-              <form id="form" class="p-4 bg-white">
-                <header class="mb-3">
-                  <h4>Add new shipment</h4>
+        <div class="site-section bg-light">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-7 mb-5">
+                <header>
+                  <h1>Hey, <%= user.first_name %>
+                  </h1>
                 </header>
 
-                <div class="row form-group">
-                  <input
-                    type="text"
-                    id="customer"
-                    class="form-control"
-                    value="<%= user._id %>"
-                    hidden
-                  />
-                  <div class="col-md-12">
-                    <label class="text-black" for="pickup_loc"
-                      >Pickup Location</label
-                    >
-                    <input
-                      type="text"
-                      id="pickup_loc"
-                      class="form-control"
-                      required
-                    />
-                  </div>
+                <div class="shipments">
+                  <h4 class="mb-3">Your shipments</h4>
+
+                  <ul class="cards">
+                    <% user.shipments.forEach(shipment=> { %>
+                      <li class="card">
+                        <header>
+                          <h2>
+                            <%= shipment.description %>
+                          </h2>
+                          <p>
+                            <%= shipment.pickup_loc.formatted_address %>
+                          </p>
+                          <pre class="mt-3">Tracking code:  <%= shipment._id %> </pre>
+                        </header>
+
+                        <div class="options">
+                          <button value="<%= shipment._id %>" class="cta delete">
+                            Delete
+                          </button>
+                        </div>
+                      </li>
+                      <% }); %>
+                  </ul>
                 </div>
-                <div class="row form-group">
-                  <div class="col-md-12">
-                    <label class="text-black" for="destination_loc"
-                      >Destination</label
-                    >
-                    <input
-                      type="text"
-                      id="destination_loc"
-                      class="form-control"
-                      required
-                    />
+              </div>
+              <div class="col-md-5">
+                <form id="form" class="p-4 bg-white">
+                  <header class="mb-3">
+                    <h4>Add new shipment</h4>
+                  </header>
+
+                  <div class="row form-group">
+                    <input type="text" id="customer" class="form-control" value="<%= user._id %>" hidden />
+                    <div class="col-md-12">
+                      <label class="text-black" for="pickup_loc">Pickup Location</label>
+                      <div type="text" id="pickup_loc_search" class="form-control mapbox-input" required></div>
+                      <input type="text" id="pickup_loc" hidden>
+                    </div>
                   </div>
-                </div>
-                <div class="row form-group">
-                  <div class="col-md-12">
-                    <label class="text-black" for="description"
-                      >Description</label
-                    >
-                    <input
-                      type="text"
-                      id="description"
-                      class="form-control"
-                      required
-                    />
+                  <div class="row form-group">
+                    <div class="col-md-12">
+                      <label class="text-black" for="destination_loc">Destination</label>
+                      <div type="text" id="destination_loc_search" class="form-control mapbox-input" required></div>
+                      <input type="text" id="destination_loc" hidden>
+                    </div>
                   </div>
-                </div>
-                <div class="row form-group">
-                  <div class="col-md-12">
-                    <input
-                      type="submit"
-                      value="Add shipment"
-                      class="btn btn-primary py-2 px-4 text-white"
-                    />
+                  <div class="row form-group">
+                    <div class="col-md-12">
+                      <label class="text-black" for="description">Description</label>
+                      <input type="text" id="description" class="form-control" required />
+                    </div>
                   </div>
-                </div>
-              </form>
+                  <div class="row form-group">
+                    <div class="col-md-12">
+                      <input type="submit" value="Add shipment" class="btn btn-primary py-2 px-4 text-white" />
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     </main>
 
     <div id="bubble" class="bubble">
       <span>Some Message</span>
     </div>
 
-    <%- include('./partials/footer.ejs') %> <%-
-    include('./partials/scripts.ejs') %>
+    <%- include('./partials/footer.ejs') %>
+      <%- include('./partials/scripts.ejs') %>
 
-    <script type="module">
-      import funcs from "/assets/js/main.js";
-      const { getData, bubbleFunc } = funcs;
-      // let pickup_address;
-      // let destination_address;
+        <script type="module">
+          import funcs from "/assets/js/main.js";
+          const { getData, bubbleFunc } = funcs;
+          // let pickup_address;
+          // let destination_address;
+          const getCoords = (e) => {
+            const data = e.result
+            const lngLat = {
+              lng: data.geometry.coordinates[0],
+              lat: data.geometry.coordinates[1]
+            }
+            console.log("pickup_Geocoder ==>", { data, lngLat })
 
-      const deleteShipment = async (id) => {
-        console.log("111", id);
-        try {
-          const res = await fetch(`/shipment/${id}`, {
-            method: "DELETE",
+            return { data, lngLat }
+          }
+
+          const pickup_loc_input = document.querySelector("#pickup_loc")
+          const destination_loc_input = document.querySelector("#destination_loc")
+
+          mapboxgl.accessToken = 'pk.eyJ1IjoibWlyYWNsZWlvIiwiYSI6ImNsMWxlZXBzZzA5dnUzaXM5aGdxcjF6emkifQ.9jyycP5jJTS_veZVNPCXiA';
+
+          const pickup_Geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            types: 'country,region,place,postcode,locality,neighborhood'
           });
-          const data = await res.json();
-          bubbleFunc({ message: "Shipment deleted succesfully" });
-        } catch (err) {}
-      };
-
-      const deleteBtns = document.querySelectorAll(".cta.delete");
-      deleteBtns.forEach((btn) =>
-        btn.addEventListener("click", (e) => deleteShipment(e.target.value))
-      );
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        console.log(customer);
-        const formData = getData([
-          customer,
-          pickup_loc,
-          destination_loc,
-          description,
-        ]);
-
-        // formData.pickup_loc = window.pickup_address;
-        formData.pickup_loc = {
-          "lat" : 23.04,
-          "lng" : 45.35
-        };
-
-        formData.current_loc = {
-          "lat" : 23.04,
-          "lng" : 45.35
-        };
-
-        // formData.destination_loc = window.destination_address;
-        formData.destination_loc = {
-          "lat" : 23.04,
-          "lng" : 45.35
-        }
-
-        console.log(formData);
-        try {
-          const res = await fetch("/shipment", {
-            method: "POST",
-            body: JSON.stringify(formData),
-            headers: { "Content-Type": "application/json" },
+          const destination_Geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            types: 'country,region,place,postcode,locality,neighborhood'
           });
 
-          const data = await res.json();
-          bubble.querySelector("span").textContent =
-            "Shipment added successfully";
-          bubble.classList.add(...["active", "success"]);
+          pickup_Geocoder.addTo('#pickup_loc_search');
+          destination_Geocoder.addTo('#destination_loc_search');
 
-          setTimeout(() => {
-            bubble.classList.remove("active");
-            window.location.reload();
-          }, 2000);
+          pickup_Geocoder.on('result', (e) => {
+            window.pickupData = getCoords(e)
+            pickup_loc_input.value = JSON.stringify(getCoords(e).lngLat)
+            console.log(pickup_loc_input.value);
+          });
 
-          console.log(data);
-        } catch (err) {
-          console.log(err);
-        }
-      });
-    </script>
+          destination_Geocoder.on('result', (e) => {
+            window.destinationData = getCoords(e)
+            destination_loc_input.value = JSON.stringify(getCoords(e).lngLat)
+            console.log(destination_loc_input.value);
+          });
 
-    <script>
+          console.log(pickup_Geocoder);
+
+          const deleteShipment = async (id) => {
+            console.log("111", id);
+            try {
+              const res = await fetch(`/shipment/${id}`, {
+                method: "DELETE",
+              });
+              const data = await res.json();
+              bubbleFunc({ message: "Shipment deleted succesfully" });
+            } catch (err) { }
+          };
+
+          const deleteBtns = document.querySelectorAll(".cta.delete");
+          deleteBtns.forEach((btn) =>
+            btn.addEventListener("click", (e) => deleteShipment(e.target.value))
+          );
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            console.log(customer);
+            const formData = getData([
+              customer,
+              pickup_loc,
+              destination_loc,
+              description,
+            ]);
+
+            if (window.pickupData && window.destinationData) {
+              formData.pickup_loc = window.pickupData
+              formData.destination_loc = window.destinationData
+            }
+
+            console.log({ formData });
+
+            // formData.pickup_loc = window.pickup_address;
+            // formData.pickup_loc = {
+            //   "lat": 23.04,
+            //   "lng": 45.35
+            // };
+
+            // formData.current_loc = {
+            //   "lat": 23.04,
+            //   "lng": 45.35
+            // };
+
+            // // formData.destination_loc = window.destination_address;
+            // formData.destination_loc = {
+            //   "lat": 23.04,
+            //   "lng": 45.35
+            // }
+
+            console.log("FORMDATA ==>", formData);
+            try {
+              const res = await fetch("/shipment", {
+                method: "POST",
+                body: JSON.stringify(formData),
+                headers: { "Content-Type": "application/json" },
+              });
+
+              const data = await res.json();
+              bubble.querySelector("span").textContent =
+                "Shipment added successfully";
+              bubble.classList.add(...["active", "success"]);
+
+              setTimeout(() => {
+                bubble.classList.remove("active");
+                window.location.reload();
+              }, 2000);
+
+              console.log(data);
+            } catch (err) {
+              console.log(err);
+            }
+          });
+        </script>
+
+        <!-- <script>
       function initMap() {
         const center = { lat: 9.082, lng: 8.6753 };
 
@@ -228,11 +259,10 @@
           window.destination_address = destination.getPlace();
         });
       }
-    </script>
+    </script> -->
 
-    <script
-      async
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVn6omdBfSc6t6AVR5ZMDKvWLJHm28nAs&libraries=places&callback=initMap"
-    ></script>
-  </body>
+        <script async
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVn6omdBfSc6t6AVR5ZMDKvWLJHm28nAs&libraries=places&callback=initMap"></script>
+</body>
+
 </html>

@@ -139,3 +139,14 @@ button {
   height: 0;
   overflow: hidden;
 }
+
+.form-control .mapboxgl-ctrl-geocoder.mapboxgl-ctrl{
+  width: 100%;
+  max-width: 100%;
+  box-shadow: none;
+  background: none;
+}
+
+.mapbox-input{
+  padding: 0;
+}

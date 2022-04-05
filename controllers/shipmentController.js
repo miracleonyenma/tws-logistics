@@ -3,7 +3,7 @@ const { User } = require('../models/User')
 
 module.exports.shipments_get = async (req, res) => {
   try {
-    const shipments = await Shipment.find({})
+    const shipments = await Shipment.find()
     res.status(200).json({
       shipments
     })
