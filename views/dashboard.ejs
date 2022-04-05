@@ -5,6 +5,16 @@
   <%- include('./partials/head.ejs') %>
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
+
+    <% if(user.role==="admin" ) { %>
+      <style>
+        .show-if-admin {
+          display: block;
+        }
+      </style>
+      <% } %>
+
+
 </head>
 
 <body>

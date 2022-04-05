@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <%- include('./partials/head.ejs') %>
+
+<head>
+  <%- include('./partials/head.ejs') %>
     <link rel="stylesheet" href="/assets/css/tracking.css" />
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+</head>
 
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl-js"></script>
-  </head>
-
-  <body>
-    <%- include('./partials/header.ejs') %>
+<body>
+  <%- include('./partials/header.ejs') %>
 
     <section class="site-section bg-light">
       <div class="container">
@@ -22,26 +22,15 @@
 
               <div class="row form-group">
                 <div class="col-md-12">
-                  <label class="text-black" for="tracking_code"
-                    >Enter Tracking Code</label
-                  >
-                  <input
-                    type="text"
-                    id="tracking_code"
-                    class="form-control"
-                    required
-                  />
+                  <label class="text-black" for="tracking_code">Enter Tracking Code</label>
+                  <input type="text" id="tracking_code" class="form-control" required />
                   <div class="error-cont tracking_code"></div>
                 </div>
               </div>
 
               <div class="row form-group">
                 <div class="col-md-12">
-                  <input
-                    type="submit"
-                    value="Show shipment"
-                    class="btn btn-primary py-2 px-4 text-white"
-                  />
+                  <input type="submit" value="Show shipment" class="btn btn-primary py-2 px-4 text-white" />
                 </div>
               </div>
             </form>
@@ -58,117 +47,208 @@
       </div>
     </section>
 
-    <%- include('./partials/footer.ejs') %> <%-
-    include('./partials/scripts.ejs') %>
+    <%- include('./partials/footer.ejs') %>
+      <%- include('./partials/scripts.ejs') %>
 
-    <script>
-      const getShipment = async (id) => {
-        const res = await fetch(`/shipment/${id}`);
-        const { shipment } = await res.json();
-        return shipment;
-      };
-
-      async function initMap() {
+        <script>
+          mapboxgl.accessToken = 'pk.eyJ1IjoibWlyYWNsZWlvIiwiYSI6ImNsMWxlZXBzZzA5dnUzaXM5aGdxcjF6emkifQ.9jyycP5jJTS_veZVNPCXiA';
+          let map;
+          let coordinates;
 
 
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        const { id } = params;
-        tracking_code.value = id
+          const getShipment = async (id) => {
+            const res = await fetch(`/shipment/${id}`);
+            const { shipment } = await res.json();
+            return shipment;
+          };
 
-        console.log(80, id);
-        console.log(getData({data: [tracking_code]}));
+          // async function initMap() {
 
-        const shipment = await getShipment(id);
-        console.log(shipment);
-        shipment_description.textContent = shipment.description
-        shipment_location.textContent = shipment.pickup_loc.formatted_address
 
-        console.log(71, shipment.pickup_loc.geometry.location);
+          //   const urlSearchParams = new URLSearchParams(window.location.search);
+          //   const params = Object.fromEntries(urlSearchParams.entries());
+          //   const { id } = params;
+          //   tracking_code.value = id
 
-        // map options
+          //   console.log(80, id);
+          //   console.log(getData({data: [tracking_code]}));
 
-        let options = {
-          zoom: 14,
+          //   const shipment = await getShipment(id);
+          //   console.log(shipment);
+          //   shipment_description.textContent = shipment.description
+          //   shipment_location.textContent = shipment.pickup_loc.formatted_address
 
-          center: shipment
-            ? shipment.pickup_loc.geometry.location
-            : { lat: 5.4891, lng: 7.0176 },
-        };
+          //   console.log(71, shipment.pickup_loc.geometry.location);
 
-        // new map
-        const map = new google.maps.Map(
-          document.querySelector("#map"),
-          options
-        );
+          //   // map options
 
-        // add marker
-        const addMarker = ({ coords }) => {
-          console.log(coords);
-          const marker = new google.maps.Marker({
-            position: coords,
-            map: map,
-          });
-        };
+          //   let options = {
+          //     zoom: 14,
 
-        addMarker({
-          coords: shipment.pickup_loc.geometry.location,
-        });
-      }
+          //     center: shipment
+          //       ? shipment.pickup_loc.geometry.location
+          //       : { lat: 5.4891, lng: 7.0176 },
+          //   };
 
-      const getData = ({ data = [] }) => {
-        const values = {};
-        console.log(data);
+          //   // new map
+          //   const map = new google.maps.Map(
+          //     document.querySelector("#map"),
+          //     options
+          //   );
 
-        data.forEach((value) => {
-          values[value.id] = value.value;
-        });
+          //   // add marker
+          //   const addMarker = ({ coords }) => {
+          //     console.log(coords);
+          //     const marker = new google.maps.Marker({
+          //       position: coords,
+          //       map: map,
+          //     });
+          //   };
 
-        console.log(values);
-        return values;
-      };
+          //   addMarker({
+          //     coords: shipment.pickup_loc.geometry.location,
+          //   });
+          // }
 
-      form.addEventListener("submit", (e) => {
-        e.preventDefault()
-        const data = getData({data: [tracking_code]})
-        console.log(data.tracking_code);
-        setTimeout(()=>{
-          window.location.assign(`/tracking?id=${data.tracking_code}`)
-        }, 3000)
-      })
+          const getData = ({ data = [] }) => {
+            const values = {};
+            console.log(data);
 
-      // const submitForm = ({ route, selector, data = [] }) => {
-      //   const form = document.querySelector(selector);
-      //   form.addEventListener("submit", async (e) => {
-      //     e.preventDefault();
+            data.forEach((value) => {
+              values[value.id] = value.value;
+            });
 
-      //     try {
-      //       const { tracking_code } = getData({ data });
-      //       console.log("tracking_code", tracking_code);
+            console.log(values);
+            return values;
+          };
 
-      //       const shipments = await getShipment(tracking_code);
-      //       console.log("shipment", shipment);
-      //       options.center = shipment.pickup_loc.geometry.location;
-      //     } catch (err) {
-      //       console.trace(err);
-      //     }
-      //   });
-      // };
 
-      // submitForm({
-      //   route: `/shipment/`,
-      //   selector: "#form",
-      //   data: [tracking_code],
-      // });
-    </script>
+          const cb = ({ map, center, coordinates }) => {
+            const marker1 = new mapboxgl.Marker({
+              color: "#000",
+              draggable: true
+            })
+              .setLngLat(center)
+              .setPopup(new mapboxgl.Popup().setHTML(
+                `<h3>Location</h3>
+                <p>Drag me to change the location</p>
+                <p>Coordinates: <span id="lat"> yo </span></p>
+                `
+              ))
+              .addTo(map);
+            // Add the control to the map.
+            // map.addControl(
+            //   new MapboxGeocoder({
+            //     accessToken: mapboxgl.accessToken,
+            //     mapboxgl: mapboxgl
+            //   })
+            // );
+            // Add the control to the map.
+            // map.addControl(
+            //   new MapboxGeocoder({
+            //     accessToken: mapboxgl.accessToken,
+            //     localGeocoder: coordinatesGeocoder,
+            //     zoom: 4,
+            //     placeholder: 'Try: -40, 170',
+            //     mapboxgl: mapboxgl,
+            //     reverseGeocode: true
+            //   })
+            // );
+            map.addControl(new mapboxgl.NavigationControl());
 
-    <script>
+            marker1.on('dragend', () => onDragEnd({ marker: marker1, coordinates }));
+
+            // map.on('click', (e) => {
+            //   const newCoords = e.lngLat;
+            //   console.log({ lng: newCoords.lng, lat: newCoords.lat });
+            //   marker1.setLngLat(newCoords).addTo(map)
+            // })
+
+          };
+
+
+          const initMapBox = ({ container, center, coordsID }, cb) => {
+            map = new mapboxgl.Map({
+              container,
+              center,
+              zoom: 10,
+              style: 'mapbox://styles/mapbox/streets-v11'
+            });
+
+            coordinates = document.getElementById(coordsID);
+
+            cb({ map, center, coordinates })
+          }
+
+
+          form.addEventListener("submit", (e) => {
+            e.preventDefault()
+            const data = getData({ data: [tracking_code] })
+            console.log(data.tracking_code);
+            setTimeout(() => {
+              window.location.assign(`/tracking?id=${data.tracking_code}`)
+            }, 3000)
+          })
+
+          // const submitForm = ({ route, selector, data = [] }) => {
+          //   const form = document.querySelector(selector);
+          //   form.addEventListener("submit", async (e) => {
+          //     e.preventDefault();
+
+          //     try {
+          //       const { tracking_code } = getData({ data });
+          //       console.log("tracking_code", tracking_code);
+
+          //       const shipments = await getShipment(tracking_code);
+          //       console.log("shipment", shipment);
+          //       options.center = shipment.pickup_loc.geometry.location;
+          //     } catch (err) {
+          //       console.trace(err);
+          //     }
+          //   });
+          // };
+
+          // submitForm({
+          //   route: `/shipment/`,
+          //   selector: "#form",
+          //   data: [tracking_code],
+          // });
+
+          document.addEventListener("readystatechange", async (e) => {
+            if (e.target.readyState === "complete") {
+              const urlSearchParams = new URLSearchParams(window.location.search);
+              const params = Object.fromEntries(urlSearchParams.entries());
+              const { id } = params;
+              tracking_code.value = id
+
+              console.log(80, id);
+              console.log(getData({ data: [tracking_code] }));
+
+              const shipment = await getShipment(id);
+              console.log(shipment);
+              shipment_description.textContent = shipment.description
+              shipment_location.textContent = `Current Location: ${shipment.current_loc.data.place_name}`
+
+              console.log(71, shipment.current_loc);
+
+              initMapBox({
+                container: 'map',
+                center: shipment.current_loc.lngLat,
+                coordsID: 'lat'
+              }, cb);
+            }
+          })
+        </script>
+
+        <!-- <script>
       mapboxgl.accessToken = 'pk.eyJ1IjoiZW5vczIyIiwiYSI6ImNsMHc2bG1wNDA0aXIzZHBvaHg0ejkyN2UifQ.b8_8NA6rih9lFRfbx9Hg0Q';
       var map = new mapboxgl.Map({
       container: 'map'
       style:
         'mapbox://style/mapbox/streets-v11'
     });
-    </script>
-  </body>
+    </script> -->
+
+</body>
+
 </html>

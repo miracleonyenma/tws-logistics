@@ -5,6 +5,14 @@
   <%- include('./partials/head.ejs') %>
     <link rel="stylesheet" href="/assets/css/dashboard.css" />
     <link rel="stylesheet" href="/assets/css/auth.css" />
+    <% if(user.role==="admin" ) { %>
+      <style>
+        .show-if-admin {
+          display: block;
+        }
+      </style>
+      <% } %>
+
 </head>
 
 <body>
@@ -84,7 +92,7 @@
                                 <input type="text" id="customer" class="form-control" value="<%= user._id %>" hidden />
                                 <div class="col-md-12">
                                   <label class="text-black" for="pickup_loc">Pickup Location</label>
-                                  <div type="text" id="pickup_loc_search" class="form-control mapbox-input" required>
+                                  <div type="text" id="" class="pickup_loc_search form-control mapbox-input" required>
                                   </div>
 
                                   <textarea type="text" id="pickup_loc" class="form-control"
@@ -96,7 +104,7 @@
                               <div class="row form-group">
                                 <div class="col-md-12">
                                   <label class="text-black" for="destination_loc">Destination</label>
-                                  <div type="text" id="destination_loc_search" class="form-control mapbox-input"
+                                  <div type="text" id="" class="destination_loc_search form-control mapbox-input"
                                     required></div>
 
                                   <textarea type="text" id="destination_loc" class="form-control"
@@ -108,7 +116,7 @@
                               <div class="row form-group">
                                 <div class="col-md-12">
                                   <label class="text-black" for="destination_loc">Current location</label>
-                                  <div type="text" id="current_loc_search" class="form-control mapbox-input" required>
+                                  <div type="text" id="" class="current_loc_search form-control mapbox-input" required>
                                   </div>
 
                                   <textarea type="text" id="current_loc" class="form-control"
@@ -199,6 +207,10 @@
           const { getData, bubbleFunc } = funcs;
           // let pickup_address;
           // let destination_address;
+
+          const pickup_loc_search_elements = document.querySelectorAll(".pickup_loc_search")
+          const destination_loc_search_elements = document.querySelectorAll(".destination_loc_search")
+          const current_loc_search_elements = document.querySelectorAll(".current_loc_search")
 
           mapboxgl.accessToken = 'pk.eyJ1IjoibWlyYWNsZWlvIiwiYSI6ImNsMWxlZXBzZzA5dnUzaXM5aGdxcjF6emkifQ.9jyycP5jJTS_veZVNPCXiA';
           let map;
@@ -321,33 +333,46 @@
 
           }
 
-          const pickup_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
-          const destination_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
-          const current_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
 
-          pickup_Geocoder.addTo('#pickup_loc_search');
-          destination_Geocoder.addTo('#destination_loc_search');
-          current_Geocoder.addTo('#current_loc_search');
+          pickup_loc_search_elements.forEach(el => {
+            const pickup_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
+            pickup_Geocoder.addTo(el.className);
 
-          pickup_Geocoder.on('result', (e) => {
-            window.pickupData = getCoords(e)
-            pickup_loc.value = JSON.stringify(getCoords(e))
-            console.log(pickup_loc.value);
-          });
+            pickup_Geocoder.on('result', (e) => {
+              window.pickupData = getCoords(e)
+              pickup_loc.value = JSON.stringify(getCoords(e))
+              console.log(pickup_loc.value);
+            });
 
-          destination_Geocoder.on('result', (e) => {
-            window.destinationData = getCoords(e)
-            destination_loc.value = JSON.stringify(getCoords(e))
-            console.log(destination_loc.value);
-          });
+            console.log(pickup_Geocoder);
+          })
 
-          current_Geocoder.on('result', (e) => {
-            window.currentData = getCoords(e)
-            current_loc.value = JSON.stringify(getCoords(e))
-            console.log(current_loc.value);
-          });
+          destination_loc_search_elements.forEach(el => {
+            const destination_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
+            destination_Geocoder.addTo(el.className);
 
-          console.log(pickup_Geocoder);
+            destination_Geocoder.on('result', (e) => {
+              window.destinationData = getCoords(e)
+              destination_loc.value = JSON.stringify(getCoords(e))
+              console.log(destination_loc.value);
+            });
+
+            console.log(destination_Geocoder);
+          })
+
+
+          current_loc_search_elements.forEach(el => {
+            const current_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
+            current_Geocoder.addTo(el.className);
+
+            current_Geocoder.on('result', (e) => {
+              window.currentData = getCoords(e)
+              current_loc.value = JSON.stringify(getCoords(e))
+              console.log(current_loc.value);
+            });
+
+            console.log(current_Geocoder);
+          })
 
 
 

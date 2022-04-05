@@ -150,3 +150,7 @@ button {
 .mapbox-input{
   padding: 0;
 }
+
+.show-if-admin{
+  display: none;
+}
