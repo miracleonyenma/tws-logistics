@@ -1,6 +1,6 @@
 const getData = (data = []) => {
   const values = {};
-  console.log(data);
+  console.log("GET DATA DATA ===>", data);
 
   data.forEach((value) => {
     values[value.id] = value.value;

@@ -87,15 +87,16 @@
                           </div>
 
                           <div id="id_<%= shipment._id %>" class="edits hidden">
-                            <form value="<%= shipment._id %> " class="mt-5">
+                            <form id="<%= shipment._id %>" value="<%= shipment._id %> " class="mt-5">
                               <div class="row form-group">
                                 <input type="text" id="customer" class="form-control" value="<%= user._id %>" hidden />
                                 <div class="col-md-12">
                                   <label class="text-black" for="pickup_loc">Pickup Location</label>
-                                  <div type="text" id="" class="pickup_loc_search form-control mapbox-input" required>
+                                  <div type="text" id="pickup_loc_<%= (shipment.id) %>"
+                                    class="pickup_loc_search form-control mapbox_input" required>
                                   </div>
 
-                                  <textarea type="text" id="pickup_loc" class="form-control"
+                                  <textarea type="text" id="pickup_loc_<%= (shipment.id) %>_input" class="form-control"
                                     value="<%= JSON.stringify(shipment.pickup_loc) %>" rows="9" required>
                                   <%= JSON.stringify(shipment.pickup_loc) %>
                                   </textarea>
@@ -104,11 +105,12 @@
                               <div class="row form-group">
                                 <div class="col-md-12">
                                   <label class="text-black" for="destination_loc">Destination</label>
-                                  <div type="text" id="" class="destination_loc_search form-control mapbox-input"
-                                    required></div>
+                                  <div type="text" id="destination_loc_<%= (shipment.id) %>"
+                                    class="destination_loc_search form-control mapbox_input" required></div>
 
-                                  <textarea type="text" id="destination_loc" class="form-control"
-                                    value="<%= JSON.stringify(shipment.destination_loc) %>" rows="9" required>
+                                  <textarea type="text" id="destination_loc_<%= (shipment.id) %>_input"
+                                    class="form-control" value="<%= JSON.stringify(shipment.destination_loc) %>"
+                                    rows="9" required>
                                   <%= JSON.stringify(shipment.destination_loc) %></textarea>
                                 </div>
                               </div>
@@ -116,10 +118,11 @@
                               <div class="row form-group">
                                 <div class="col-md-12">
                                   <label class="text-black" for="destination_loc">Current location</label>
-                                  <div type="text" id="" class="current_loc_search form-control mapbox-input" required>
+                                  <div type="text" id="current_loc_<%= (shipment.id) %>"
+                                    class="current_loc_search form-control mapbox_input" required>
                                   </div>
 
-                                  <textarea type="text" id="current_loc" class="form-control"
+                                  <textarea type="text" id="current_loc_<%= (shipment.id) %>_input" class="form-control"
                                     value="<%= JSON.stringify(shipment.current_loc) %>" rows="9" required>
                                   <%= JSON.stringify(shipment.current_loc) %>
                                   </textarea>
@@ -212,6 +215,10 @@
           const destination_loc_search_elements = document.querySelectorAll(".destination_loc_search")
           const current_loc_search_elements = document.querySelectorAll(".current_loc_search")
 
+          window.pickup_loc_search_elements = pickup_loc_search_elements
+          window.destination_loc_search_elements = destination_loc_search_elements
+          window.current_loc_search_elements = current_loc_search_elements
+
           mapboxgl.accessToken = 'pk.eyJ1IjoibWlyYWNsZWlvIiwiYSI6ImNsMWxlZXBzZzA5dnUzaXM5aGdxcjF6emkifQ.9jyycP5jJTS_veZVNPCXiA';
           let map;
           let coordinates;
@@ -237,7 +244,7 @@
               .setPopup(new mapboxgl.Popup().setHTML(
                 `<h3>Location</h3>
                 <p>Drag me to change the location</p>
-                <p>Coordinates: <span id="lat"> yo </span></p>
+                <p>Drag the marker to view coordinates</p>
                 `
               ))
               .addTo(map);
@@ -256,7 +263,7 @@
                 zoom: 4,
                 placeholder: 'Try: -40, 170',
                 mapboxgl: mapboxgl,
-                reverseGeocode: true
+                proximity: "ip"
               })
             );
             map.addControl(new mapboxgl.NavigationControl());
@@ -267,6 +274,8 @@
               const newCoords = e.lngLat;
               console.log({ lng: newCoords.lng, lat: newCoords.lat });
               marker1.setLngLat(newCoords).addTo(map)
+
+              window.newCoords = newCoords
             })
 
           };
@@ -329,32 +338,41 @@
             zoom: 4,
             placeholder: 'Try: -40, 170',
             mapboxgl: mapboxgl,
-            reverseGeocode: true
-
+            proximity: {
+              latitude: 9.0820,
+              longitude: 8.6753
+            }
           }
 
-
+          console.log(pickup_loc_search_elements);
           pickup_loc_search_elements.forEach(el => {
+            console.log("EL =========================>", el);
             const pickup_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
-            pickup_Geocoder.addTo(el.className);
+            pickup_Geocoder.addTo(`#${el.id}`);
 
             pickup_Geocoder.on('result', (e) => {
               window.pickupData = getCoords(e)
-              pickup_loc.value = JSON.stringify(getCoords(e))
-              console.log(pickup_loc.value);
+
+              const inputEl = document.querySelector(`#${el.id}_input`)
+              console.log("inputEl =========>", inputEl);
+              inputEl.value = JSON.stringify(getCoords(e))
             });
 
             console.log(pickup_Geocoder);
           })
 
           destination_loc_search_elements.forEach(el => {
+            console.log("EL =========================>", el);
+
             const destination_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
-            destination_Geocoder.addTo(el.className);
+            destination_Geocoder.addTo(`#${el.id}`);
 
             destination_Geocoder.on('result', (e) => {
               window.destinationData = getCoords(e)
-              destination_loc.value = JSON.stringify(getCoords(e))
-              console.log(destination_loc.value);
+
+              const inputEl = document.querySelector(`#${el.id}_input`)
+              console.log(inputEl);
+              inputEl.value = JSON.stringify(getCoords(e))
             });
 
             console.log(destination_Geocoder);
@@ -362,13 +380,16 @@
 
 
           current_loc_search_elements.forEach(el => {
+            console.log("EL =========================>", el);
+
             const current_Geocoder = new MapboxGeocoder(mapboxGeocoderOptions);
-            current_Geocoder.addTo(el.className);
+            current_Geocoder.addTo(`#${el.id}`);
 
             current_Geocoder.on('result', (e) => {
               window.currentData = getCoords(e)
-              current_loc.value = JSON.stringify(getCoords(e))
-              console.log(current_loc.value);
+
+              const inputEl = document.querySelector(`#${el.id}_input`)
+              inputEl.value = JSON.stringify(getCoords(e))
             });
 
             console.log(current_Geocoder);
@@ -458,33 +479,67 @@
                 initMapBox({ container: `map_${id}`, center: current_loc, coordsID: `coords_${id}` }, cb);
                 activeMap = true;
               }
-              document.querySelector(`#${id}`).classList.toggle("hidden")
+              const editCont = document.querySelector(`#${id}`)
+              editCont.classList.toggle("hidden")
             })
           })
 
           const editForms = document.querySelectorAll('.edits form').forEach((form) => {
             let id = form.getAttribute('value');
             console.log(form);
+
             form.addEventListener('submit', async (e) => {
               e.preventDefault();
-              let pickup_loc = form.querySelector('#pickup_loc')
-              let destination_loc = form.querySelector('#destination_loc')
-              let current_loc = form.querySelector('#current_loc')
-              let customer = form.querySelector('#customer')
+              let pickup_loc = form.querySelector(`#pickup_loc_${id}_input`.replace(" ", ""))
+              let destination_loc = form.querySelector(`#destination_loc_${id}_input`.replace(" ", ""))
+              let current_loc = form.querySelector(`#current_loc_${id}_input`.replace(" ", ""))
+              let customer = form.querySelector('#customer').value
+
+              console.log({
+                id,
+                customer,
+                pickup_loc,
+                destination_loc,
+                current_loc,
+              });
+
 
               const formData = getData([
-                customer,
                 pickup_loc,
                 destination_loc,
                 current_loc,
               ]);
 
-              // formData.customer = JSON.parse(customer)
-              formData.pickup_loc = JSON.parse(formData.pickup_loc)
-              formData.destination_loc = JSON.parse(formData.destination_loc)
-              formData.current_loc = JSON.parse(formData.current_loc)
+              console.log("formData ===>", formData);
 
-              console.log(formData);
+              for (const key in formData) {
+                if (Object.hasOwnProperty.call(formData, key)) {
+
+                  const element = formData[key];
+                  formData[key] = JSON.parse(element)
+
+                  if (key.includes("pickup_loc")) {
+                    formData["pickup_loc"] = formData[key]
+                  }
+                  if (key.includes("destination_loc")) {
+                    formData["destination_loc"] = formData[key]
+                  }
+                  if (key.includes("current_loc")) {
+                    formData["current_loc"] = formData[key]
+                  }
+
+
+                }
+              }
+
+              formData.customer = customer
+
+              // formData.customer = JSON.parse(customer)
+              // formData.pickup_loc = JSON.parse(formData.pickup_loc)
+              // formData.destination_loc = JSON.parse(formData.destination_loc)
+              // formData.current_loc = JSON.parse(formData.current_loc)
+
+              console.log("FORM DATA Yoooooooooooooo >", formData);
 
               try {
                 const res = await fetch(`/shipment/${id}`, {

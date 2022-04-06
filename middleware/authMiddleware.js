@@ -28,7 +28,7 @@ const checkUser = async (req, res, next) => {
         jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
             if (err) {
                 // console.log(err.message);
-                res.locals.user = null
+                res.locals.user = user
                 next()
             } else {
                 // console.log('decodedToken', decodedToken);
@@ -41,6 +41,7 @@ const checkUser = async (req, res, next) => {
                     return value.role !== "admin"
                 })
                 console.log(res.locals.users);
+                console.log("SHIPMENTS ===>", shipments);
                 res.locals.shipments = shipments
                 next()
             }

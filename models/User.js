@@ -57,6 +57,15 @@ UserSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt()
     user.password = await bcrypt.hash(user.password, salt)
 
+    bcrypt.hash(user.password, 10, function (err, hash) {
+        if (err) { throw (err); }
+
+        bcrypt.compare(user.password, hash, function (err, result) {
+            if (err) { throw (err); }
+            console.log(result);
+        });
+    });
+
     console.log('user not yet created', user);
     next()
 })
@@ -65,8 +74,17 @@ UserSchema.statics.login = async function (email, password) {
     const user = await this.findOne({ email })
 
     if (user) {
+        const salt = await bcrypt.genSalt()
+
+        console.log(await bcrypt.hash(user.password, salt))
+
         const auth = await bcrypt.compare(password, user.password)
-        if (auth) return user
+        console.log({ password, user: user.password });
+
+        console.log("AUTH ==>", auth);
+        if (auth) {
+            return user
+        }
 
         throw Error('Incorrect password')
     }
